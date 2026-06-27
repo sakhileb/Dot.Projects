@@ -1,0 +1,29 @@
+<?php
+
+use App\Http\Controllers\Auth\EcosystemAuthController;
+use App\Http\Controllers\ProjectController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/auth/ecosystem', [EcosystemAuthController::class, 'handle'])
+    ->name('ecosystem.auth');
+
+Route::get('/', fn () => view('welcome'));
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+])->group(function () {
+    Route::get('/dashboard', function () {
+        $projects = auth()->user()->currentTeam
+            ->projects()
+            ->withCount(['tasks', 'tasks as done_tasks_count' => fn ($q) => $q->where('status', 'done')])
+            ->latest()
+            ->get();
+
+        return view('dashboard', compact('projects'));
+    })->name('dashboard');
+
+    Route::get('/projects/create', fn () => view('projects.create'))->name('projects.create');
+    Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
+});
