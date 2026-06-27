@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="public/dot_projects.png" alt="Dot.Projects" width="280" />
+
 <h1>Dot.Projects</h1>
 
 <p>AI-powered project management — plan, track, and deliver projects with intelligent milestone generation and a drag-and-drop kanban board.</p>
