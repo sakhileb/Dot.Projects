@@ -17,6 +17,7 @@ Route::middleware([
     Route::get('/dashboard', function () {
         $projects = auth()->user()->currentTeam
             ->projects()
+            ->select(['id', 'team_id', 'owner_id', 'name', 'description', 'status', 'start_date', 'due_date', 'created_at', 'updated_at'])
             ->withCount(['tasks', 'tasks as done_tasks_count' => fn ($q) => $q->where('status', 'done')])
             ->latest()
             ->get();

@@ -1,23 +1,29 @@
 <div>
-    <form wire:submit="save" class="space-y-5">
+    <style>
+        .dp-label { display:block;font-size:0.72rem;font-weight:700;color:#8d90a2;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.45rem; }
+        .dp-input { width:100%;background:#0b1326;border:1px solid rgba(67,70,86,0.5);border-radius:0.5rem;padding:0.65rem 0.85rem;font-size:0.85rem;color:#dae2fd;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s; }
+        .dp-input:focus { border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,0.15); }
+        .dp-input::placeholder { color:#3d4566; }
+        .dp-input option { background:#131b2e;color:#dae2fd; }
+    </style>
+
+    <form wire:submit="save" style="display:flex;flex-direction:column;gap:1.25rem;">
+
         <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Project Name</label>
-            <input wire:model="name" type="text" placeholder="e.g. Website Redesign"
-                   class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-            @error('name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+            <label class="dp-label">Project Name</label>
+            <input wire:model="name" type="text" placeholder="e.g. Website Redesign" class="dp-input">
+            @error('name')<p style="margin-top:0.35rem;font-size:0.72rem;color:#f87171;">{{ $message }}</p>@enderror
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
-            <textarea wire:model="description" rows="3" placeholder="What is this project about? The more detail, the better the AI plan."
-                      class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+            <label class="dp-label">Description</label>
+            <textarea wire:model="description" rows="3" placeholder="What is this project about? The more detail, the better the AI plan." class="dp-input" style="resize:vertical;min-height:80px;"></textarea>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
-                <select wire:model="status"
-                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                <label class="dp-label">Status</label>
+                <select wire:model="status" class="dp-input">
                     <option value="planning">Planning</option>
                     <option value="active">Active</option>
                     <option value="on_hold">On Hold</option>
@@ -25,26 +31,36 @@
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Due Date</label>
-                <input wire:model="dueDate" type="date"
-                       class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm">
+                <label class="dp-label">Start Date</label>
+                <input wire:model="startDate" type="date" class="dp-input">
             </div>
         </div>
 
+        <div>
+            <label class="dp-label">Due Date</label>
+            <input wire:model="dueDate" type="date" class="dp-input">
+        </div>
+
         @if($aiError)
-            <div class="rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 p-3 text-sm text-yellow-800 dark:text-yellow-200">
+            <div style="border-radius:0.5rem;background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.25);padding:0.75rem 1rem;font-size:0.78rem;color:#fbbf24;">
                 {{ $aiError }}
             </div>
         @endif
 
-        <div class="flex gap-3 pt-2">
+        <div style="display:flex;gap:0.75rem;padding-top:0.5rem;">
             <button type="submit"
-                    class="flex-1 py-2.5 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    style="flex:1;display:flex;align-items:center;justify-content:center;gap:0.4rem;border-radius:9999px;border:1px solid rgba(124,58,237,0.4);background:transparent;padding:0.7rem 1rem;font-family:'Manrope',sans-serif;font-size:0.78rem;font-weight:700;color:#b6c4ff;cursor:pointer;transition:background 0.2s;"
+                    onmouseover="this.style.background='rgba(124,58,237,0.1)'" onmouseout="this.style.background='transparent'">
+                <span class="material-symbols-outlined" style="font-size:16px;">save</span>
                 Create Project
             </button>
             <button type="button" wire:click="generatePlan" wire:loading.attr="disabled"
-                    class="flex-1 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-60 flex items-center justify-center gap-2">
-                <span wire:loading.remove wire:target="generatePlan">✨ AI Generate Plan</span>
+                    style="flex:1;display:flex;align-items:center;justify-content:center;gap:0.4rem;border-radius:9999px;background:linear-gradient(135deg,#7c3aed,#5b21b6);padding:0.7rem 1rem;font-family:'Manrope',sans-serif;font-size:0.78rem;font-weight:700;color:#f7f5ff;cursor:pointer;border:none;box-shadow:0 8px 20px rgba(124,58,237,0.3);transition:opacity 0.2s;"
+                    onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                <span wire:loading.remove wire:target="generatePlan" style="display:flex;align-items:center;gap:0.4rem;">
+                    <span class="material-symbols-outlined" style="font-size:16px;">auto_awesome</span>
+                    AI Generate Plan
+                </span>
                 <span wire:loading wire:target="generatePlan">Generating...</span>
             </button>
         </div>

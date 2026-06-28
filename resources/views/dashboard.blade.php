@@ -1,61 +1,103 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Projects
-            </h2>
-            <a href="{{ route('projects.create') }}"
-               class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700">
-                + New Project
+    <div style="padding:2rem 2.5rem;">
+
+        {{-- Page header --}}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;">
+            <div>
+                <h1 style="font-family:'Manrope',sans-serif;font-size:1.5rem;font-weight:800;color:#dae2fd;margin:0 0 0.25rem;">Projects Dashboard</h1>
+                <p style="font-size:0.8rem;color:#8d90a2;margin:0;">Overview of all your team projects</p>
+            </div>
+            <a href="{{ route('projects.create') }}" style="display:flex;align-items:center;gap:0.5rem;border-radius:9999px;background:linear-gradient(135deg,#7c3aed,#5b21b6);padding:0.65rem 1.25rem;font-family:'Manrope',sans-serif;font-size:0.8rem;font-weight:700;color:#f7f5ff;text-decoration:none;box-shadow:0 8px 20px rgba(124,58,237,0.3);">
+                <span class="material-symbols-outlined" style="font-size:18px;">add_circle</span>
+                New Project
             </a>
         </div>
-    </x-slot>
 
-    <div class="py-10">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if($projects->isEmpty())
-                <div class="text-center py-20">
-                    <p class="text-gray-500 dark:text-gray-400 mb-4">No projects yet.</p>
-                    <a href="{{ route('projects.create') }}"
-                       class="inline-flex items-center px-5 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700">
-                        Create your first project
-                    </a>
-                </div>
-            @else
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($projects as $project)
-                        <a href="{{ route('projects.show', $project) }}"
-                           class="block bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
-                            <div class="flex items-start justify-between mb-3">
-                                <h3 class="font-semibold text-gray-900 dark:text-white truncate">{{ $project->name }}</h3>
-                                <span class="ml-2 shrink-0 text-xs px-2 py-0.5 rounded-full
-                                    {{ match($project->status) {
-                                        'active'    => 'bg-green-100 text-green-700',
-                                        'planning'  => 'bg-blue-100 text-blue-700',
-                                        'on_hold'   => 'bg-yellow-100 text-yellow-700',
-                                        'completed' => 'bg-gray-100 text-gray-600',
-                                        default     => 'bg-gray-100 text-gray-600',
-                                    } }}">
-                                    {{ str_replace('_', ' ', ucfirst($project->status)) }}
-                                </span>
-                            </div>
-                            @if($project->description)
-                                <p class="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-4">{{ $project->description }}</p>
-                            @endif
-                            <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                                <span>{{ $project->tasks_count }} tasks</span>
-                                <span>{{ $project->done_tasks_count }}/{{ $project->tasks_count }} done</span>
-                            </div>
-                            @if($project->tasks_count > 0)
-                                <div class="mt-2 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                                    <div class="h-full bg-indigo-500 rounded-full transition-all"
-                                         style="width: {{ ($project->done_tasks_count / $project->tasks_count) * 100 }}%"></div>
-                                </div>
-                            @endif
-                        </a>
-                    @endforeach
-                </div>
-            @endif
+        {{-- KPI Cards --}}
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;">
+            <div style="background:#131b2e;border:1px solid rgba(67,70,86,0.3);border-radius:0.75rem;padding:1.25rem 1.5rem;">
+                <div style="font-size:0.68rem;font-weight:700;color:#8d90a2;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">Total Projects</div>
+                <div style="font-family:'Manrope',sans-serif;font-size:2.25rem;font-weight:800;color:#dae2fd;line-height:1;">{{ $projects->count() }}</div>
+            </div>
+            <div style="background:#131b2e;border:1px solid rgba(67,70,86,0.3);border-radius:0.75rem;padding:1.25rem 1.5rem;">
+                <div style="font-size:0.68rem;font-weight:700;color:#8d90a2;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">Active</div>
+                <div style="font-family:'Manrope',sans-serif;font-size:2.25rem;font-weight:800;color:#60a5fa;line-height:1;">{{ $projects->where('status','active')->count() }}</div>
+            </div>
+            <div style="background:#131b2e;border:1px solid rgba(67,70,86,0.3);border-radius:0.75rem;padding:1.25rem 1.5rem;">
+                <div style="font-size:0.68rem;font-weight:700;color:#8d90a2;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">Completed</div>
+                <div style="font-family:'Manrope',sans-serif;font-size:2.25rem;font-weight:800;color:#22c55e;line-height:1;">{{ $projects->where('status','completed')->count() }}</div>
+            </div>
+            <div style="background:#131b2e;border:1px solid rgba(67,70,86,0.3);border-radius:0.75rem;padding:1.25rem 1.5rem;">
+                <div style="font-size:0.68rem;font-weight:700;color:#8d90a2;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">Total Tasks</div>
+                <div style="font-family:'Manrope',sans-serif;font-size:2.25rem;font-weight:800;color:#a78bfa;line-height:1;">{{ $projects->sum('tasks_count') }}</div>
+            </div>
         </div>
+
+        {{-- Projects Grid / Empty State --}}
+        @if($projects->isEmpty())
+            <div style="text-align:center;padding:5rem 2rem;background:#131b2e;border:1px solid rgba(67,70,86,0.3);border-radius:1rem;">
+                <span class="material-symbols-outlined" style="font-size:52px;color:#3d4566;display:block;margin-bottom:1rem;">folder_open</span>
+                <p style="font-family:'Manrope',sans-serif;font-size:1.05rem;font-weight:700;color:#dae2fd;margin:0 0 0.4rem;">No projects yet</p>
+                <p style="font-size:0.8rem;color:#8d90a2;margin:0 0 1.75rem;">Create your first project to get your team started.</p>
+                <a href="{{ route('projects.create') }}" style="display:inline-flex;align-items:center;gap:0.5rem;border-radius:9999px;background:linear-gradient(135deg,#7c3aed,#5b21b6);padding:0.7rem 1.5rem;font-family:'Manrope',sans-serif;font-size:0.8rem;font-weight:700;color:#f7f5ff;text-decoration:none;box-shadow:0 8px 20px rgba(124,58,237,0.3);">
+                    <span class="material-symbols-outlined" style="font-size:16px;">add_circle</span>
+                    Create your first project
+                </a>
+            </div>
+        @else
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.25rem;">
+                @foreach($projects as $project)
+                    @php
+                        $pct = $project->tasks_count > 0
+                            ? round(($project->done_tasks_count / $project->tasks_count) * 100)
+                            : 0;
+                        [$badgeBg, $badgeColor, $barColor] = match($project->status) {
+                            'active'    => ['rgba(96,165,250,0.12)', '#60a5fa', '#60a5fa'],
+                            'planning'  => ['rgba(148,163,184,0.12)', '#94a3b8', '#94a3b8'],
+                            'on_hold'   => ['rgba(251,146,60,0.12)', '#fb923c', '#fb923c'],
+                            'completed' => ['rgba(34,197,94,0.12)', '#22c55e', '#22c55e'],
+                            default     => ['rgba(148,163,184,0.12)', '#94a3b8', '#a78bfa'],
+                        };
+                    @endphp
+                    <a href="{{ route('projects.show', $project) }}"
+                       style="display:block;background:#131b2e;border:1px solid rgba(67,70,86,0.3);border-radius:0.75rem;padding:1.5rem;text-decoration:none;transition:border-color 0.2s,box-shadow 0.2s;"
+                       onmouseover="this.style.borderColor='rgba(124,58,237,0.45)';this.style.boxShadow='0 4px 24px rgba(124,58,237,0.1)'"
+                       onmouseout="this.style.borderColor='rgba(67,70,86,0.3)';this.style.boxShadow='none'">
+
+                        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.65rem;gap:0.5rem;">
+                            <h3 style="font-family:'Manrope',sans-serif;font-size:0.95rem;font-weight:700;color:#dae2fd;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $project->name }}</h3>
+                            <span style="flex-shrink:0;font-size:0.62rem;font-weight:700;padding:0.2rem 0.55rem;border-radius:9999px;text-transform:uppercase;letter-spacing:0.07em;background:{{ $badgeBg }};color:{{ $badgeColor }};">
+                                {{ str_replace('_', ' ', ucfirst($project->status)) }}
+                            </span>
+                        </div>
+
+                        @if($project->description)
+                            <p style="font-size:0.78rem;color:#6b7a9a;margin:0 0 1rem;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{{ $project->description }}</p>
+                        @else
+                            <div style="margin-bottom:1rem;"></div>
+                        @endif
+
+                        {{-- Progress bar --}}
+                        <div style="margin-bottom:0.85rem;">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:0.35rem;">
+                                <span style="font-size:0.65rem;color:#8d90a2;">Progress</span>
+                                <span style="font-size:0.65rem;color:#8d90a2;">{{ $project->done_tasks_count }}/{{ $project->tasks_count }} tasks done</span>
+                            </div>
+                            <div style="height:5px;background:rgba(67,70,86,0.45);border-radius:9999px;overflow:hidden;">
+                                <div style="height:100%;width:{{ $pct }}%;background:{{ $barColor }};border-radius:9999px;transition:width 0.3s;"></div>
+                            </div>
+                        </div>
+
+                        @if($project->due_date)
+                            <div style="display:flex;align-items:center;gap:0.35rem;">
+                                <span class="material-symbols-outlined" style="font-size:14px;color:#8d90a2;">calendar_today</span>
+                                <span style="font-size:0.68rem;color:#8d90a2;">Due {{ \Carbon\Carbon::parse($project->due_date)->format('M d, Y') }}</span>
+                            </div>
+                        @endif
+                    </a>
+                @endforeach
+            </div>
+        @endif
+
     </div>
 </x-app-layout>
